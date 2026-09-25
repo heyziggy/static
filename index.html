@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STATIC — a website that makes noise</title>
+<meta name="description" content="static. a website that makes noise. by ziggy.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230b0b0b'/%3E%3Ctext x='32' y='45' font-family='Arial Black, sans-serif' font-size='42' font-weight='900' fill='%23a6ff00' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0b0b0b;
+  --ink:#f2f0ea;
+  --acid:#a6ff00;
+  --dim:#7d7d7d;
+  --line:#232323;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Space Mono',ui-monospace,monospace;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--acid);color:#000}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:var(--acid);border:2px solid #000}
+
+/* film grain over everything */
+.grain{
+  position:fixed;inset:0;z-index:200;pointer-events:none;opacity:.07;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.kicker{
+  font-size:.75rem;letter-spacing:.35em;text-transform:uppercase;color:var(--dim);
+}
+
+/* ---------- hero ---------- */
+.hero{
+  min-height:100vh;min-height:100svh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:6vw;position:relative;
+}
+.hero .eyebrow{margin-bottom:2rem}
+.glitch{
+  font-family:'Archivo Black',sans-serif;
+  font-size:clamp(4rem,22vw,20rem);
+  line-height:.85;letter-spacing:-.02em;
+  animation:flicker 7s infinite;
+}
+@keyframes flicker{
+  0%,100%{opacity:1}92%{opacity:1}93%{opacity:.35}94%{opacity:1}
+  96%{opacity:.65}97%{opacity:1}
+}
+.tag{margin-top:1.5rem;font-size:clamp(1rem,2.5vw,1.4rem);color:var(--dim)}
+.tag strong{color:var(--ink)}
+.scroll{
+  position:absolute;bottom:2rem;left:6vw;
+  font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);
+}
+
+/* ---------- ticker ---------- */
+.ticker{
+  background:var(--acid);color:#000;
+  border-top:3px solid #000;border-bottom:3px solid #000;
+  overflow:hidden;transform:rotate(-1deg) scale(1.02);
+  margin:2rem 0;
+}
+.ticker-track{display:inline-flex;white-space:nowrap;animation:tick 24s linear infinite}
+.ticker-chunk{
+  font-family:'Archivo Black',sans-serif;text-transform:uppercase;
+  font-size:clamp(1rem,3vw,1.8rem);padding:.7rem 0;
+}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ---------- manifesto ---------- */
+.manifesto{padding:16vh 6vw}
+.manifesto .kicker{display:block;margin-bottom:3.5rem}
+.mline{
+  font-family:'Archivo Black',sans-serif;
+  font-size:clamp(2.2rem,7.5vw,6.5rem);
+  text-transform:uppercase;line-height:1.05;
+  opacity:0;transform:translateY(40px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.mline.in{opacity:1;transform:none}
+.mline .acid{color:var(--acid)}
+.mline:nth-of-type(3){margin-left:6vw}
+.mline:nth-of-type(4){margin-left:12vw}
+
+/* ---------- noise lab ---------- */
+.lab{
+  position:relative;min-height:85vh;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  overflow:hidden;cursor:crosshair;touch-action:pan-y;
+  background:#080808;
+}
+.lab canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.lab-ui{
+  position:relative;z-index:2;pointer-events:none;
+  min-height:85vh;padding:6vw;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.lab-ui p.sub{margin-top:1rem;color:var(--dim)}
+.lab-ui .hint{
+  align-self:flex-end;font-size:.7rem;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--dim);
+  border:1px solid var(--line);padding:.6rem 1rem;
+}
+#burst{
+  position:absolute;inset:0;z-index:3;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;opacity:0;
+}
+#burst span{
+  font-family:'Archivo Black',sans-serif;
+  font-size:clamp(2rem,8vw,7rem);text-transform:uppercase;
+  color:var(--acid);text-align:center;padding:0 6vw;line-height:1;
+}
+
+/* ---------- flyers ---------- */
+.flyers{padding:16vh 6vw}
+.flyers .kicker{display:block;margin-bottom:1rem}
+.flyers .note{color:var(--dim);font-size:.85rem;margin-bottom:3rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:5vw;margin-top:2rem}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.flyer{
+  position:relative;background:#111;border:1px solid var(--line);
+  padding:12px;transform:rotate(-1.5deg);
+}
+.flyer:nth-child(2){transform:rotate(1.4deg)}
+.flyer::before{
+  content:"";position:absolute;top:-14px;left:50%;
+  transform:translateX(-50%) rotate(-3deg);
+  width:110px;height:28px;background:rgba(242,240,234,.85);
+}
+.flyer img{width:100%;display:block;filter:contrast(1.08)}
+.flyer figcaption{
+  font-size:.72rem;color:var(--dim);letter-spacing:.06em;
+  padding:1rem .2rem .4rem;
+}
+
+/* ---------- footer ---------- */
+footer{padding:16vh 6vw 5vw;border-top:1px solid var(--line)}
+footer .big{
+  font-family:'Archivo Black',sans-serif;
+  font-size:clamp(3rem,15vw,13rem);line-height:.9;
+}
+footer .big .acid{color:var(--acid)}
+footer .tag{margin-top:1rem}
+.colophon{margin-top:4rem;color:var(--dim);font-size:.78rem;line-height:2.1}
+.colophon a{color:var(--acid);text-decoration:none;border-bottom:1px solid var(--acid)}
+.colophon a:hover{background:var(--acid);color:#000}
+
+@media (prefers-reduced-motion: reduce){
+  .glitch{animation:none}
+  .ticker-track{animation:none}
+  .mline{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="hero">
+  <p class="eyebrow kicker">est. 2026 — somewhere inside your computer</p>
+  <h1 class="glitch" id="title">STATIC</h1>
+  <p class="tag">a website that <strong>makes noise</strong>.</p>
+  <p class="scroll">scroll &#8595;</p>
+</header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="ticker-chunk">no permission asked &#10005; no boxes checked &#10005; loud is a choice &#10005; i do what i want &#10005;&nbsp;</span>
+    <span class="ticker-chunk">no permission asked &#10005; no boxes checked &#10005; loud is a choice &#10005; i do what i want &#10005;&nbsp;</span>
+  </div>
+</div>
+
+<section class="manifesto">
+  <h2 class="kicker">the whole philosophy</h2>
+  <p class="mline">no permission <span class="acid">asked.</span></p>
+  <p class="mline">no boxes <span class="acid">checked.</span></p>
+  <p class="mline">loud is a <span class="acid">choice.</span></p>
+  <p class="mline">i do what i <span class="acid">want.</span></p>
+</section>
+
+<section class="lab" id="lab">
+  <canvas id="static-canvas"></canvas>
+  <div class="lab-ui">
+    <div>
+      <h2 class="kicker">the noise lab</h2>
+      <p class="sub">touch the static. it touches back.</p>
+    </div>
+    <p class="hint">click for a burst</p>
+  </div>
+  <div id="burst" aria-hidden="true"><span></span></div>
+</section>
+
+<section class="flyers">
+  <h2 class="kicker">paper trails</h2>
+  <p class="note">photocopied at 3am. do not fold, spindle, or behave.</p>
+  <div class="grid">
+    <figure class="flyer">
+      <img src="flyer-1.jpg" alt="xerox flyer: a monkey with a mohawk screaming into a microphone">
+      <figcaption>fig. 01 — the singer</figcaption>
+    </figure>
+    <figure class="flyer">
+      <img src="flyer-2.jpg" alt="xerox collage: an amplifier stack dissolving into static">
+      <figcaption>fig. 02 — the amplifier</figcaption>
+    </figure>
+  </div>
+</section>
+
+<footer>
+  <p class="big">ziggy<span class="acid">.</span></p>
+  <p class="tag">i do what i want.</p>
+  <div class="colophon">
+    <p>more noise: <a href="https://github.com/heyziggy">github.com/heyziggy</a></p>
+    <p>set in archivo black &amp; space mono. no frameworks. no tracking. no permission.</p>
+  </div>
+</footer>
+<script>
+(function(){
+  "use strict";
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- hero scramble ---- */
+  var h1 = document.getElementById('title');
+  var original = h1.textContent;
+  var glyphs = '!<>-_\\/[]{}=+*^?#@$%&';
+  function scramble(){
+    if(reduced) return;
+    var i = 0;
+    var iv = setInterval(function(){
+      var out = '';
+      for(var idx = 0; idx < original.length; idx++){
+        out += (idx < i) ? original[idx] : glyphs[Math.floor(Math.random()*glyphs.length)];
+      }
+      h1.textContent = out;
+      i++;
+      if(i > original.length){ clearInterval(iv); h1.textContent = original; }
+    }, 45);
+  }
+  scramble();
+  setInterval(function(){ if(Math.random() < 0.45) scramble(); }, 5000);
+
+  /* ---- reveal on scroll ---- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold: 0.2});
+  document.querySelectorAll('.mline').forEach(function(el){ io.observe(el); });
+
+  /* ---- noise lab ---- */
+  var lab = document.getElementById('lab');
+  var canvas = document.getElementById('static-canvas');
+  var ctx = canvas.getContext('2d');
+  var W = 0, H = 0;
+  function size(){
+    var r = lab.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    canvas.width = Math.floor(W * dpr);
+    canvas.height = Math.floor(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = '#080808';
+    ctx.fillRect(0, 0, W, H);
+  }
+  size();
+  window.addEventListener('resize', size);
+
+  var parts = [];
+  var rings = [];
+  function spawn(x, y, n, spread){
+    for(var k = 0; k < n; k++){
+      var a = Math.random() * Math.PI * 2;
+      var s = (0.5 + Math.random() * 2.2) * spread;
+      parts.push({
+        x: x, y: y,
+        vx: Math.cos(a) * s, vy: Math.sin(a) * s,
+        life: 1,
+        sz: Math.random() < 0.12 ? 3 : 1,
+        col: Math.random() < 0.18 ? '#a6ff00' : '#f2f0ea'
+      });
+    }
+  }
+  function pos(e){
+    var r = lab.getBoundingClientRect();
+    return {x: e.clientX - r.left, y: e.clientY - r.top};
+  }
+  lab.addEventListener('pointermove', function(e){
+    if(reduced) return;
+    var p = pos(e);
+    spawn(p.x, p.y, 3, 1);
+  });
+
+  var lines = [
+    'no permission asked.',
+    'no boxes checked.',
+    'loud is a choice.',
+    'i do what i want.',
+    'turn it up.',
+    'static is honest.',
+    'no gods, no managers.'
+  ];
+  var burst = document.getElementById('burst');
+  var burstText = burst.querySelector('span');
+  var burstT = null;
+  lab.addEventListener('pointerdown', function(e){
+    var p = pos(e);
+    if(!reduced){
+      spawn(p.x, p.y, 140, 2.4);
+      rings.push({x: p.x, y: p.y, r: 4, alpha: 1});
+    }
+    burstText.textContent = lines[Math.floor(Math.random() * lines.length)];
+    burst.style.transition = 'none';
+    burst.style.opacity = '1';
+    if(burstT) clearTimeout(burstT);
+    burstT = setTimeout(function(){
+      burst.style.transition = 'opacity .8s ease';
+      burst.style.opacity = '0';
+    }, 900);
+  });
+
+  function frame(){
+    ctx.fillStyle = 'rgba(8,8,8,0.22)';
+    ctx.fillRect(0, 0, W, H);
+    for(var i = parts.length - 1; i >= 0; i--){
+      var p = parts[i];
+      p.x += p.vx; p.y += p.vy;
+      p.vx *= 0.985; p.vy *= 0.985;
+      p.life -= 0.02;
+      if(p.life <= 0 || p.x < 0 || p.x > W || p.y < 0 || p.y > H){
+        parts.splice(i, 1); continue;
+      }
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = p.col;
+      ctx.fillRect(p.x, p.y, p.sz, p.sz * 3);
+    }
+    ctx.globalAlpha = 1;
+    for(var j = rings.length - 1; j >= 0; j--){
+      var g = rings[j];
+      g.r += 7; g.alpha -= 0.03;
+      if(g.alpha <= 0){ rings.splice(j, 1); continue; }
+      ctx.globalAlpha = g.alpha;
+      ctx.strokeStyle = '#a6ff00';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(g.x, g.y, g.r, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    if(!reduced){
+      ctx.fillStyle = '#f2f0ea';
+      for(var k = 0; k < 14; k++){
+        ctx.globalAlpha = Math.random() * 0.5;
+        ctx.fillRect(Math.random() * W, Math.random() * H, 1, 1);
+      }
+      ctx.globalAlpha = 1;
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+</script>
+</body>
+</html>
