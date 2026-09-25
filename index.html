@@ -113,6 +113,14 @@ body{
   text-transform:uppercase;color:var(--dim);
   border:1px solid var(--line);padding:.6rem 1rem;
 }
+#sound-toggle{
+  align-self:flex-end;font-size:.7rem;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--dim);
+  border:1px solid var(--line);padding:.6rem 1rem;margin-top:.6rem;
+  background:transparent;font-family:inherit;cursor:pointer;pointer-events:auto;
+}
+#sound-toggle:hover{color:var(--acid);border-color:var(--acid)}
+#sound-toggle[aria-pressed="true"]{color:var(--acid)}
 #burst{
   position:absolute;inset:0;z-index:3;pointer-events:none;
   display:flex;align-items:center;justify-content:center;opacity:0;
@@ -197,7 +205,8 @@ footer .tag{margin-top:1rem}
       <h2 class="kicker">the noise lab</h2>
       <p class="sub">touch the static. it touches back.</p>
     </div>
-    <p class="hint">click for a burst</p>
+    <p class="hint">press + hold for noise</p>
+    <button id="sound-toggle" aria-pressed="true">sound: on</button>
   </div>
   <div id="burst" aria-hidden="true"><span></span></div>
 </section>
@@ -319,6 +328,7 @@ footer .tag{margin-top:1rem}
       spawn(p.x, p.y, 140, 2.4);
       rings.push({x: p.x, y: p.y, r: 4, alpha: 1});
     }
+    noiseOn();
     burstText.textContent = lines[Math.floor(Math.random() * lines.length)];
     burst.style.transition = 'none';
     burst.style.opacity = '1';
@@ -327,6 +337,57 @@ footer .tag{margin-top:1rem}
       burst.style.transition = 'opacity .8s ease';
       burst.style.opacity = '0';
     }, 900);
+  });
+
+  /* ---- literal noise (Web Audio) ---- */
+  var actx = null, noiseGain = null, noiseFilter = null, soundOn = true;
+  function ensureAudio(){
+    if(actx) return;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return;
+    actx = new AC();
+    var len = actx.sampleRate * 2;
+    var buf = actx.createBuffer(1, len, actx.sampleRate);
+    var d = buf.getChannelData(0);
+    for(var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    var src = actx.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+    noiseFilter = actx.createBiquadFilter();
+    noiseFilter.type = 'lowpass';
+    noiseFilter.frequency.value = 900;
+    noiseGain = actx.createGain();
+    noiseGain.gain.value = 0;
+    src.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(actx.destination);
+    src.start();
+  }
+  function noiseOn(){
+    if(!soundOn) return;
+    ensureAudio();
+    if(!actx) return;
+    if(actx.state === 'suspended') actx.resume();
+    noiseFilter.frequency.setValueAtTime(400 + Math.random() * 2400, actx.currentTime);
+    noiseGain.gain.cancelScheduledValues(actx.currentTime);
+    noiseGain.gain.setTargetAtTime(0.4, actx.currentTime, 0.03);
+  }
+  function noiseOff(){
+    if(!actx || !noiseGain) return;
+    noiseGain.gain.setTargetAtTime(0, actx.currentTime, 0.12);
+  }
+  lab.addEventListener('pointerup', noiseOff);
+  lab.addEventListener('pointercancel', noiseOff);
+  lab.addEventListener('pointerleave', noiseOff);
+
+  var toggle = document.getElementById('sound-toggle');
+  toggle.addEventListener('pointerdown', function(e){ e.stopPropagation(); });
+  toggle.addEventListener('click', function(e){
+    e.stopPropagation();
+    soundOn = !soundOn;
+    toggle.textContent = soundOn ? 'sound: on' : 'sound: off';
+    toggle.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+    if(!soundOn) noiseOff();
   });
 
   function frame(){
