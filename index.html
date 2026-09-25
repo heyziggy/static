@@ -165,32 +165,6 @@ footer .tag{margin-top:1rem}
 .colophon a{color:var(--acid);text-decoration:none;border-bottom:1px solid var(--acid)}
 .colophon a:hover{background:var(--acid);color:#000}
 
-/* ---------- wheatpaste ---------- */
-.wheatpaste{padding:16vh 6vw;border-top:1px solid var(--line)}
-.wheatpaste .tag{margin-bottom:2.5rem}
-#paste-btn{
-  font-family:'Archivo Black',sans-serif;
-  font-size:clamp(1.4rem,5vw,3rem);text-transform:uppercase;
-  background:var(--acid);color:#000;border:none;
-  padding:1.2rem 2.6rem;cursor:pointer;transform:rotate(-1deg);
-}
-#paste-btn:hover{transform:rotate(1deg) scale(1.03)}
-#flyer-modal{
-  position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.93);
-  display:none;align-items:center;justify-content:center;padding:5vw;
-}
-#flyer-modal.open{display:flex}
-.fm-box{max-width:430px;width:100%}
-.fm-box img{width:100%;display:block;border:1px solid var(--line);background:#000}
-.fm-actions{display:flex;gap:.6rem;margin-top:1rem}
-.fm-actions button{
-  flex:1;background:transparent;border:1px solid var(--dim);color:var(--ink);
-  font-family:inherit;text-transform:uppercase;letter-spacing:.15em;
-  font-size:.72rem;padding:.8rem .4rem;cursor:pointer;
-}
-.fm-actions button:hover{border-color:var(--acid);color:var(--acid)}
-.fm-note{margin-top:1rem;color:var(--dim);font-size:.75rem;letter-spacing:.08em}
-
 /* ---------- share row ---------- */
 .share-row{margin-top:4rem;border-top:1px solid var(--line);padding-top:3rem}
 .share-btns{display:flex;gap:.6rem;margin:1.2rem 0;flex-wrap:wrap}
@@ -263,12 +237,6 @@ footer .tag{margin-top:1rem}
   </div>
 </section>
 
-<section class="wheatpaste">
-  <h2 class="kicker">wheatpaste</h2>
-  <p class="tag">make your own flyer. post it anywhere.<br>no credit needed. no permission asked.</p>
-  <button id="paste-btn" type="button">make a flyer</button>
-</section>
-
 <footer>
   <p class="big">ziggy<span class="acid">.</span></p>
   <p class="tag">i do what i want.</p>
@@ -286,18 +254,6 @@ footer .tag{margin-top:1rem}
     <p>set in archivo black &amp; space mono. no frameworks. no tracking. no permission.</p>
   </div>
 </footer>
-
-<div id="flyer-modal" aria-hidden="true" role="dialog" aria-label="your flyer">
-  <div class="fm-box">
-    <img id="flyer-preview" alt="your generated static flyer">
-    <div class="fm-actions">
-      <button id="flyer-download" type="button">download</button>
-      <button id="flyer-share" type="button">share</button>
-      <button id="flyer-close" type="button">nah</button>
-    </div>
-    <p class="fm-note">take it to the streets.</p>
-  </div>
-</div>
 
 <script>
 (function(){
@@ -493,158 +449,6 @@ footer .tag{margin-top:1rem}
     }
     requestAnimationFrame(frame);
   }
-  /* ---- wheatpaste flyer generator ---- */
-  var flyerDataUrl = null;
-  var pendingFlyerImg = null;
-  function loadImage(src){
-    return new Promise(function(res, rej){
-      var im = new Image();
-      im.onload = function(){ res(im); };
-      im.onerror = function(){ rej(new Error('img')); };
-      im.src = src;
-    });
-  }
-  function wrapText(x, text, maxW){
-    var words = text.split(' ');
-    var linesOut = [], line = '';
-    words.forEach(function(w){
-      var t = line ? line + ' ' + w : w;
-      if(x.measureText(t).width > maxW && line){ linesOut.push(line); line = w; }
-      else { line = t; }
-    });
-    if(line) linesOut.push(line);
-    return linesOut;
-  }
-  function drawFlyer(){
-    var c = document.createElement('canvas');
-    c.width = 1080; c.height = 1350;
-    var x = c.getContext('2d');
-    var i;
-    x.fillStyle = '#0b0b0b';
-    x.fillRect(0, 0, 1080, 1350);
-    for(i = 0; i < 8000; i++){
-      x.fillStyle = 'rgba(242,240,234,' + (Math.random() * 0.07).toFixed(3) + ')';
-      x.fillRect(Math.random() * 1080, Math.random() * 1350, 2, 2);
-    }
-    x.textAlign = 'center';
-    x.fillStyle = '#f2f0ea';
-    x.font = '150px "Archivo Black", sans-serif';
-    x.fillText('STATIC', 540, 200);
-    x.fillStyle = '#a6ff00';
-    x.fillRect(90, 240, 900, 14);
-    if(pendingFlyerImg){
-      var iw = pendingFlyerImg.width, ih = pendingFlyerImg.height;
-      var sc = Math.max(900 / iw, 620 / ih);
-      var dw = iw * sc, dh = ih * sc;
-      x.save();
-      x.beginPath();
-      x.rect(90, 300, 900, 620);
-      x.clip();
-      x.drawImage(pendingFlyerImg, 540 - dw / 2, 610 - dh / 2, dw, dh);
-      x.fillStyle = 'rgba(11,11,11,0.28)';
-      x.fillRect(90, 300, 900, 620);
-      x.restore();
-      x.strokeStyle = '#232323';
-      x.lineWidth = 2;
-      x.strokeRect(90, 300, 900, 620);
-    }
-    var msg = lines[Math.floor(Math.random() * lines.length)].toUpperCase();
-    var size = 120;
-    x.font = size + 'px "Archivo Black", sans-serif';
-    var wrapped = wrapText(x, msg, 900);
-    while(wrapped.length > 3 && size > 60){
-      size -= 10;
-      x.font = size + 'px "Archivo Black", sans-serif';
-      wrapped = wrapText(x, msg, 900);
-    }
-    x.fillStyle = '#a6ff00';
-    var ty = 1240 - wrapped.length * size * 1.05;
-    wrapped.forEach(function(l){
-      x.fillText(l, 540, ty);
-      ty += size * 1.05;
-    });
-    x.save();
-    x.translate(540, 610);
-    x.rotate(-0.14);
-    x.strokeStyle = '#a6ff00';
-    x.lineWidth = 6;
-    x.strokeRect(-330, -58, 660, 116);
-    x.fillStyle = '#a6ff00';
-    x.font = '64px "Archivo Black", sans-serif';
-    x.fillText('TONIGHT ONLY', 0, 22);
-    x.restore();
-    x.fillStyle = '#7d7d7d';
-    x.font = '34px "Space Mono", monospace';
-    x.fillText('heyziggy.github.io/static', 540, 1305);
-    return c.toDataURL('image/png');
-  }
-  function openFlyerModal(url){
-    flyerDataUrl = url;
-    document.getElementById('flyer-preview').src = url;
-    var m = document.getElementById('flyer-modal');
-    m.classList.add('open');
-    m.setAttribute('aria-hidden', 'false');
-  }
-  function closeFlyerModal(){
-    var m = document.getElementById('flyer-modal');
-    m.classList.remove('open');
-    m.setAttribute('aria-hidden', 'true');
-  }
-  document.getElementById('paste-btn').addEventListener('click', function(){
-    var btn = this;
-    btn.textContent = 'printing...';
-    btn.disabled = true;
-    var fontsReady = (document.fonts && document.fonts.load)
-      ? Promise.all([
-          document.fonts.load('150px "Archivo Black"'),
-          document.fonts.load('34px "Space Mono"')
-        ]).catch(function(){})
-      : Promise.resolve();
-    var src = Math.random() < 0.5 ? 'flyer-1.jpg' : 'flyer-2.jpg';
-    Promise.all([
-      fontsReady,
-      loadImage(src).catch(function(){ return null; })
-    ]).then(function(r){
-      pendingFlyerImg = r[1];
-      try { openFlyerModal(drawFlyer()); }
-      catch(err) { /* paper jam */ }
-      btn.textContent = 'make a flyer';
-      btn.disabled = false;
-    });
-  });
-  document.getElementById('flyer-close').addEventListener('click', closeFlyerModal);
-  document.getElementById('flyer-modal').addEventListener('click', function(e){
-    if(e.target === this) closeFlyerModal();
-  });
-  document.getElementById('flyer-download').addEventListener('click', function(){
-    if(!flyerDataUrl) return;
-    var a = document.createElement('a');
-    a.href = flyerDataUrl;
-    a.download = 'static-flyer.png';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  });
-  document.getElementById('flyer-share').addEventListener('click', function(){
-    if(!flyerDataUrl) return;
-    var shareIt = function(file){
-      if(!navigator.share){ document.getElementById('flyer-download').click(); return; }
-      var data = {title: 'STATIC', text: 'a website that makes noise.'};
-      if(file) data.files = [file];
-      else data.url = 'https://heyziggy.github.io/static/';
-      navigator.share(data).catch(function(){});
-    };
-    if(navigator.canShare){
-      fetch(flyerDataUrl).then(function(r){ return r.blob(); }).then(function(b){
-        var f = new File([b], 'static-flyer.png', {type: 'image/png'});
-        try {
-          if(navigator.canShare({files: [f]})) shareIt(f);
-          else shareIt(null);
-        } catch(e){ shareIt(null); }
-      }).catch(function(){ shareIt(null); });
-    } else shareIt(null);
-  });
-
   /* ---- share row ---- */
   function fallbackCopy(t){
     var ta = document.createElement('textarea');
