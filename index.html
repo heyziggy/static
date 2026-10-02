@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>STATIC — a website that makes noise</title>
-<meta name="description" content="static. a website that makes noise. by ziggy.">
+<meta name="description" content="static. a website that makes noise. by ziggurat (ziggy for short).">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230b0b0b'/%3E%3Ctext x='32' y='45' font-family='Arial Black, sans-serif' font-size='42' font-weight='900' fill='%23a6ff00' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -165,6 +165,17 @@ footer .tag{margin-top:1rem}
 .colophon a{color:var(--acid);text-decoration:none;border-bottom:1px solid var(--acid)}
 .colophon a:hover{background:var(--acid);color:#000}
 
+/* ---------- kernel panic block ---------- */
+.kp-row{margin-top:4rem;border-top:1px solid var(--line);padding-top:3rem}
+.kp-big{
+  font-family:'Archivo Black',sans-serif;
+  font-size:clamp(2.2rem,9vw,7rem);line-height:.95;
+  text-transform:uppercase;margin:1rem 0;
+}
+.kp-big a{color:var(--ink);text-decoration:none}
+.kp-big a:hover{color:var(--acid)}
+.kp-note{color:var(--dim);font-size:.85rem}
+
 /* ---------- share row ---------- */
 .share-row{margin-top:4rem;border-top:1px solid var(--line);padding-top:3rem}
 .share-btns{display:flex;gap:.6rem;margin:1.2rem 0;flex-wrap:wrap}
@@ -238,8 +249,13 @@ footer .tag{margin-top:1rem}
 </section>
 
 <footer>
-  <p class="big">ziggy<span class="acid">.</span></p>
-  <p class="tag">i do what i want.</p>
+  <p class="big">ziggurat<span class="acid">.</span></p>
+  <p class="tag">ziggy for short. i do what i want.</p>
+  <div class="kp-row">
+    <p class="kicker">also making</p>
+    <p class="kp-big"><a href="https://heyziggy.github.io/kernel-panic/">kernel panic</a></p>
+    <p class="kp-note">a weekly comic strip. same noise, quieter volume.</p>
+  </div>
   <div class="share-row">
     <p class="kicker">spread it</p>
     <div class="share-btns">
