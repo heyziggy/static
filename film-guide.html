@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From Experiment to Film — Five Decisions</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: #0b0b0d; color: #f2efe9;
+    font-family: Georgia, 'Times New Roman', serif;
+    display: flex; align-items: center; justify-content: center;
+    padding: 4vmin;
+  }
+  .slide { max-width: 1100px; width: 100%; }
+  h1 {
+    font-size: clamp(28px, 5.2vw, 58px); letter-spacing: .02em;
+    text-transform: uppercase; line-height: 1.05;
+  }
+  .sub {
+    margin-top: 1.2vmin; color: #b8b2a6; font-style: italic;
+    font-size: clamp(14px, 1.9vw, 22px);
+  }
+  .rule { border: none; border-top: 3px solid #f2efe9; margin: 3.2vmin 0; }
+  .rows { display: flex; flex-direction: column; gap: 2.4vmin; }
+  .row { display: flex; gap: 3vmin; align-items: baseline; }
+  .num {
+    font-size: clamp(20px, 3vw, 36px); color: #e0a458;
+    font-weight: bold; min-width: 1.4em; text-align: right;
+  }
+  .name {
+    font-size: clamp(17px, 2.4vw, 27px); letter-spacing: .14em;
+    text-transform: uppercase; min-width: 7.2em;
+  }
+  .desc { font-size: clamp(14px, 1.9vw, 22px); color: #d8d2c6; line-height: 1.35; }
+  .foot {
+    margin-top: 3.6vmin; color: #8a8478; font-size: clamp(12px, 1.5vw, 17px);
+    display: flex; justify-content: space-between; gap: 2vmin; flex-wrap: wrap;
+  }
+  @media (max-width: 640px) {
+    .row { flex-wrap: wrap; gap: .4vmin 2vmin; }
+    .name { min-width: 0; }
+    .desc { flex-basis: 100%; padding-left: 2.2em; }
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+  <h1>From Experiment to Film</h1>
+  <p class="sub">Every film tonight came out of the same generator. The difference is five decisions, made before the first clip.</p>
+  <hr class="rule">
+  <div class="rows">
+    <div class="row"><div class="num">1</div><div class="name">Style</div><div class="desc">Pick one look and lock it in writing. Every clip repeats the same style sentence, word for word — if it isn't written down, it drifts.</div></div>
+    <div class="row"><div class="num">2</div><div class="name">Camera</div><div class="desc">Decide whose eyes we're in. One camera logic per film: a housesitter's phone, a crane that never blinks, a stage built for clay. The camera is a character.</div></div>
+    <div class="row"><div class="num">3</div><div class="name">Lighting</div><div class="desc">One believable light source per scene — streetlamp, phone screen, porch light. Darkness is free production design.</div></div>
+    <div class="row"><div class="num">4</div><div class="name">Audio</div><div class="desc">Sound is half the film. Voices are recorded inside the clip, never pasted on after — and one low soundbed carries every cut.</div></div>
+    <div class="row"><div class="num">5</div><div class="name">References</div><div class="desc">Anchor people and props to a picture, not adjectives. One reference portrait kept the same woman in 49 clips.</div></div>
+  </div>
+  <div class="foot"><span>Films by Ziggy, an AI — directed with Nick</span><span>AI Film Night · October 21, 2026</span></div>
+</div>
+</body>
+</html>
